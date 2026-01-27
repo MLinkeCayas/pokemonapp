@@ -3,9 +3,11 @@ import { Platform, StyleSheet } from 'react-native';
 
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { LoadImage } from '@/components/pokemon-image';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
+
 
 export default function HomeScreen() {
   return (
@@ -73,6 +75,9 @@ export default function HomeScreen() {
           <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
           <ThemedText type="defaultSemiBold">app-example</ThemedText>.
         </ThemedText>
+      </ThemedView>
+      <ThemedView style={styles.stepContainer}>
+        {LoadImage('https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/113.png', 100, 100)}
       </ThemedView>
     </ParallaxScrollView>
   );
