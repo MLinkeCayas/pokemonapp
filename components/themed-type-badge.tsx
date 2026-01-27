@@ -23,7 +23,7 @@ type PokemonTypeName =
   | "Steel"
   | "Fairy";
 
-type PokemonType = {
+export type PokemonType = {
   id: number;
   name: PokemonTypeName;
 };
@@ -55,7 +55,7 @@ export type ThemedTypeBadgeProps = {
   pokemonType: PokemonType;
 };
 
-export default function ThemedTypeBadge({
+export function ThemedTypeBadge({
   lightColor,
   darkColor,
   pokemonType,
