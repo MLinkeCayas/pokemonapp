@@ -1,16 +1,25 @@
-import { Image, StyleSheet } from "react-native";
+import { Image, ImageStyle, StyleProp, StyleSheet } from "react-native";
 
-export async function LoadImage(
-  imagePath: string,
-  imageHeight: number,
-  imageWidth: number,
-) {
+interface PokemonImageProps {
+  style?: StyleProp<ImageStyle>;
+  imagePath: string;
+  imageHeight: number;
+  imageWidth: number;
+}
+
+export function PokemonImage({
+  imagePath,
+  imageHeight,
+  imageWidth,
+  style,
+}: PokemonImageProps) {
   return (
     <Image
       source={{ uri: imagePath }}
       style={[
         styles.imageHeader,
-        { width: imageWidth, height: imageHeight, flex: 1 },
+        { width: imageWidth, height: imageHeight },
+        style,
       ]}
     />
   );

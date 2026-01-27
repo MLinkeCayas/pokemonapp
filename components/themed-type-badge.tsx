@@ -3,50 +3,45 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "./themed-text";
 import { ThemedView } from "./themed-view";
 
-type PokemonTypeName =
-  | "Normal"
-  | "Fire"
-  | "Water"
-  | "Grass"
-  | "Electric"
-  | "Ice"
-  | "Fighting"
-  | "Poison"
-  | "Ground"
-  | "Flying"
-  | "Psychic"
-  | "Bug"
-  | "Rock"
-  | "Ghost"
-  | "Dark"
-  | "Dragon"
-  | "Steel"
-  | "Fairy";
+type PokemonType =
+  | "normal"
+  | "fire"
+  | "water"
+  | "grass"
+  | "electric"
+  | "ice"
+  | "fighting"
+  | "poison"
+  | "ground"
+  | "flying"
+  | "psychic"
+  | "bug"
+  | "rock"
+  | "ghost"
+  | "dark"
+  | "dragon"
+  | "steel"
+  | "fairy";
 
-export type PokemonType = {
-  id: number;
-  name: PokemonTypeName;
-};
-
-const pokemonTypeColors: Record<PokemonTypeName, string> = {
-  Normal: "#A8A77A",
-  Fire: "#EE8130",
-  Water: "#6390F0",
-  Grass: "#7AC74C",
-  Electric: "#F7D02C",
-  Ice: "#96D9D6",
-  Fighting: "#C22E28",
-  Poison: "#A33EA1",
-  Ground: "#E2BF65",
-  Flying: "#A98FF3",
-  Psychic: "#F95587",
-  Bug: "#A6B91A",
-  Rock: "#B6A136",
-  Ghost: "#735797",
-  Dark: "#705746",
-  Dragon: "#6F35FC",
-  Steel: "#B7B7CE",
-  Fairy: "#D685AD",
+const pokemonTypeColors: Record<PokemonType, string> = {
+  normal: "#A8A77A",
+  fire: "#EE8130",
+  water: "#6390F0",
+  grass: "#7AC74C",
+  electric: "#F7D02C",
+  ice: "#96D9D6",
+  fighting: "#C22E28",
+  poison: "#A33EA1",
+  ground: "#E2BF65",
+  flying: "#A98FF3",
+  psychic: "#F95587",
+  bug: "#A6B91A",
+  rock: "#B6A136",
+  ghost: "#735797",
+  dark: "#705746",
+  dragon: "#6F35FC",
+  steel: "#B7B7CE",
+  fairy: "#D685AD",
 };
 
 export type ThemedTypeBadgeProps = {
@@ -69,14 +64,14 @@ export function ThemedTypeBadge({
         lightColor={typeColor}
         darkColor={typeColor}
       >
-        <ThemedText style={styles.badgeText}>{pokemonType.name}</ThemedText>
+        <ThemedText style={styles.badgeText}>{pokemonType}</ThemedText>
       </ThemedView>
     </SafeAreaView>
   );
 }
 
 function getTypeColor(pokemonType: PokemonType): string {
-  return pokemonTypeColors[pokemonType.name];
+  return pokemonTypeColors[pokemonType];
 }
 
 const styles = StyleSheet.create({

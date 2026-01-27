@@ -87,7 +87,7 @@ export async function getPokemons(pageSize: number, page: number) {
 
   const result: GetPokemonsResult = await response.json();
 
-  return await Promise.all(
+  const pokemons = await Promise.all(
     result.results.map((pokemonRef) =>
       getPokemon(pokemonRef.url).catch((error) => {
         console.error(error);
@@ -95,8 +95,12 @@ export async function getPokemons(pageSize: number, page: number) {
       }),
     ),
   );
+
+  return pokemons.filter((pokemon) => pokemon !== null);
 }
 
+/*
 getPokemons(10, 0)
   .then((result) => console.log(JSON.stringify(result, null, 2)))
   .catch(console.error);
+*/
