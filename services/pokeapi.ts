@@ -50,8 +50,7 @@ async function getPokemon(url: string) : Promise<Pokemon> {
 
   if(!response.ok) throw new Error("Not ok")
 
-  const json = await response.json()
-  const result: Pokemon = JSON.parse(JSON.stringify(json))
+  const result: Pokemon = await response.json()
 
   return result
 }
@@ -63,8 +62,7 @@ export async function getPokemons(pageSize: number, page: number) {
 
   if(!response.ok) throw new Error("Not ok")
 
-  const json = await response.json()
-  const result: GetPokemonsResult = JSON.parse(JSON.stringify(json))
+  const result: GetPokemonsResult = await response.json()
 
   const pokemons = await Promise.all(result.results.map(pokemonRef => getPokemon(pokemonRef.url)))
 
