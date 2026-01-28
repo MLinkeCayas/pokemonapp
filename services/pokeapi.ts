@@ -105,7 +105,7 @@ export async function getPokemons(pageSize: number, page: number) {
 }
 
 export async function getPokemonsInfinite(pageSize: number, page: number) {
-  const uri = `${baseUri}?limit=${pageSize}&offset=${page}`;
+  const uri = `${baseUri}?limit=${pageSize}&offset=${page * pageSize}`;
 
   const response = await fetch(uri);
 
