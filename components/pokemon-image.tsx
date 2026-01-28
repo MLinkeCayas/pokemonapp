@@ -1,4 +1,5 @@
-import { Image, ImageStyle, StyleProp, StyleSheet } from "react-native";
+import { Image } from "expo-image";
+import { ImageStyle, StyleProp, StyleSheet } from "react-native";
 
 interface PokemonImageProps {
   style?: StyleProp<ImageStyle>;
