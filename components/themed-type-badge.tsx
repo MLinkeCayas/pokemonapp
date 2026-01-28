@@ -63,7 +63,7 @@ export function ThemedTypeBadge({
       lightColor={typeColor}
       darkColor={typeColor}
     >
-      <ThemedText style={styles.badgeText}>{pokemonType}</ThemedText>
+      <ThemedText style={styles.badgeText}>{pokemonType.toUpperCase()}</ThemedText>
     </ThemedView>
   );
 }
@@ -76,8 +76,13 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
   },
-  badge: { width: 80, borderRadius: 10 },
+  badge: { width: 80, borderRadius: 40, borderColor: 'black', borderWidth: 2 },
   badgeText: {
     alignSelf: "center",
+    fontSize: 14,
+    color: 'white',
+    textShadowColor: 'black',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2
   },
 });
