@@ -67,7 +67,7 @@ export function renderSeparator() {
 
 export default function PokemonListScreen() {
   const { data, isLoading, error, fetchNextPage, hasNextPage } =
-    usePokemonsInfinite(20, 60);
+    usePokemonsInfinite(20, 0);
   const pokemons = useMemo(
     () => data?.pages.flatMap((page) => page.items) ?? [],
     [data],
