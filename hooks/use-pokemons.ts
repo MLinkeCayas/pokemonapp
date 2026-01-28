@@ -2,8 +2,13 @@ import {
   getPokemonById,
   getPokemons,
   getPokemonsInfinite,
+  Pokemon,
 } from "@/services/pokeapi";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 export function usePokemons(pageSize: number, page: number) {
   return useQuery({
@@ -13,9 +18,29 @@ export function usePokemons(pageSize: number, page: number) {
 }
 
 export function usePokemon(pokemonId: number) {
+  const queryClient = useQueryClient();
   return useQuery({
     queryKey: ["pokemon", pokemonId],
     queryFn: () => getPokemonById(pokemonId),
+    initialData: () => {
+      const infiniteQueries = queryClient.getQueriesData<{
+        pages: { items: Pokemon[] }[];
+      }>({
+        queryKey: ["pokemons"],
+      });
+
+      for (const [, data] of infiniteQueries) {
+        if (data) {
+          for (const page of data.pages) {
+            const pokemon = page.items.find((p) => p.id === pokemonId);
+            if (pokemon) {
+              return pokemon;
+            }
+          }
+        }
+      }
+      return undefined;
+    },
   });
 }
 
