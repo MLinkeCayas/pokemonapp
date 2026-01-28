@@ -44,6 +44,7 @@ interface PokemonRef {
 }
 interface GetPokemonsResult {
   results: PokemonRef[];
+  next: string | null;
 }
 
 async function getPokemon(url: string): Promise<Pokemon> {
@@ -97,6 +98,36 @@ export async function getPokemons(pageSize: number, page: number) {
   );
 
   return pokemons.filter((pokemon) => pokemon !== null);
+}
+
+export async function getPokemonsInfinite(pageSize: number, page: number) {
+  const uri = `${baseUri}?limit=${pageSize}&offset=${page}`;
+
+  const response = await fetch(uri);
+
+  if (!response.ok) throw new Error("Not ok");
+
+  const result: GetPokemonsResult = await response.json();
+
+  const pokemons = await Promise.all(
+    result.results.map((pokemonRef) =>
+      getPokemon(pokemonRef.url).catch((error) => {
+        console.error(error);
+        return null;
+      }),
+    ),
+  );
+
+  const filteredPokemons = pokemons.filter((pokemon) => pokemon !== null);
+
+  let nextCursor: number | undefined;
+  if (result.next) {
+    const u = new URL(result.next);
+    const nextOffset = Number(u.searchParams.get("offset"));
+    nextCursor = nextOffset;
+  }
+
+  return { items: filteredPokemons, nextCursor };
 }
 
 /*
