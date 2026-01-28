@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import {
   DarkTheme,
@@ -21,9 +22,14 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SafeAreaView style={{ flex: 1 }} edges={["top", "bottom"]}>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+        <StatusBar style="auto" />
+        <SafeAreaView
+          style={{
+            flex: 1,
+            backgroundColor: Colors[colorScheme ?? "light"].background,
+          }}
+          edges={["top", "bottom"]}
         >
           <Stack>
             <Stack.Screen name="index" options={{ title: "All Pokemons" }} />
@@ -32,9 +38,8 @@ export default function RootLayout() {
               options={{ title: "Pokemon Detail" }}
             />
           </Stack>
-          <StatusBar style="auto" />
-        </ThemeProvider>
-      </SafeAreaView>
+        </SafeAreaView>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
