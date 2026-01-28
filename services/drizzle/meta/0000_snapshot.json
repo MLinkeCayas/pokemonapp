@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "81aa7eb4-8ed9-4e8f-a0a7-6bd2e6858ca3",
+  "id": "1e1de7f2-21c0-44ab-b639-a1c363c997a7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "pokemon": {
@@ -12,7 +12,7 @@
           "type": "integer",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
         },
         "name": {
           "name": "name",

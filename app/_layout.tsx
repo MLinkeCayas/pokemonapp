@@ -1,7 +1,7 @@
 import { Colors } from "@/constants/theme";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 import migrations from "@/services/drizzle/migrations";
-import { db } from "@/services/pokomon-db";
+import { db, fillDatabase } from "@/services/pokomon-db";
 import {
   DarkTheme,
   DefaultTheme,
@@ -23,13 +23,14 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const migrationsResult = useMigrations(db, migrations.migrations as any);
+  const migrationsResult = useMigrations(db, migrations as any);
 
   useEffect(() => {
     if (migrationsResult.success) {
+      fillDatabase();
       console.log("Migrations successful");
     } else {
-      console.log("Migrations failed");
+      console.log("Migrations failed", migrationsResult.error, migrations);
     }
   }, [migrationsResult]);
 
