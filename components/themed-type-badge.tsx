@@ -58,6 +58,7 @@ export function ThemedTypeBadge({
 
   return (
     <ThemedView
+      testID={`type-badge-${pokemonType}`}
       style={styles.badge}
       lightColor={typeColor}
       darkColor={typeColor}
