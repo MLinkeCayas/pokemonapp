@@ -3,8 +3,66 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedTypeBadge } from "@/components/themed-type-badge";
 import { ThemedView } from "@/components/themed-view";
 import { usePokemons } from "@/hooks/use-pokemons";
-import { Link } from "expo-router";
-import { ScrollView } from "react-native";
+import { Pokemon } from "@/services/pokeapi";
+import { useRouter } from "expo-router";
+import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
+
+function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function PokemonListItem({ pokemon }: { pokemon: Pokemon }) {
+  const router = useRouter();
+
+  function navigateToDetails(id: number) {
+    router.navigate(`/pokemon/${id}`);
+  }
+
+  return (
+    <TouchableOpacity
+      onPress={() => navigateToDetails(pokemon.id)}
+      style={styles.touchableListItem}
+      activeOpacity={0.3}
+    >
+      <ThemedView
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <PokemonImage
+          imagePath={pokemon.sprites.front_default}
+          imageHeight={100}
+          imageWidth={100}
+          style={{ flex: 0, minWidth: 110 }}
+        />
+        <ThemedText type="default" style={styles.pokemonNumber}>
+          #{pokemon.id}
+        </ThemedText>
+        <ThemedText
+          type="defaultSemiBold"
+          style={{ flex: 1, flexWrap: "wrap" }}
+        >
+          {capitalize(pokemon.name)}
+        </ThemedText>
+        <ThemedView style={styles.badgeContainer}>
+          {pokemon.types.map((type) => (
+            <ThemedTypeBadge
+              key={type.type.name}
+              pokemonType={type.type.name as any}
+            />
+          ))}
+        </ThemedView>
+        <ThemedText style={styles.chevronRight}>❯</ThemedText>
+      </ThemedView>
+    </TouchableOpacity>
+  );
+}
+
+export function renderSeparator() {
+  return <ThemedView style={styles.separator} />;
+}
 
 export default function PokemonListScreen() {
   const { data, isLoading, error } = usePokemons(100, 0);
@@ -15,67 +73,43 @@ export default function PokemonListScreen() {
 
   return (
     <ThemedView style={{ flex: 1 }}>
-      <ScrollView style={{ flex: 1 }}>
-        {data?.map((pokemon) => (
-          <Link
-            href={`/pokemon/${pokemon.id}`}
-            key={pokemon.id}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              padding: 10,
-              flex: 1,
-            }}
-          >
-            <ThemedView
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <PokemonImage
-                imagePath={pokemon.sprites.front_default}
-                imageHeight={100}
-                imageWidth={100}
-                style={{ flex: 0, minWidth: 110 }}
-              />
-              <ThemedText
-                type="default"
-                style={{
-                  flex: 0,
-                  width: 45,
-                  textAlign: "right",
-                  marginRight: 10,
-                }}
-              >
-                #{pokemon.order}
-              </ThemedText>
-              <ThemedText
-                type="defaultSemiBold"
-                style={{ flex: 1, flexWrap: "wrap" }}
-              >
-                {pokemon.name}
-              </ThemedText>
-              <ThemedView
-                style={{
-                  flexDirection: "column",
-                  flex: 0,
-                  marginRight: 10,
-                  gap: 5,
-                }}
-              >
-                {pokemon.types.map((type) => (
-                  <ThemedTypeBadge
-                    key={type.type.name}
-                    pokemonType={type.type.name as any}
-                  />
-                ))}
-              </ThemedView>
-            </ThemedView>
-          </Link>
-        ))}
-      </ScrollView>
+      <FlatList
+        data={data}
+        ItemSeparatorComponent={renderSeparator}
+        renderItem={(item) => <PokemonListItem pokemon={item.item} />}
+        style={{ flex: 1 }}
+        keyExtractor={(item) => item.id.toString()}
+      />
     </ThemedView>
   );
 }
+
+const styles = StyleSheet.create({
+  separator: {
+    height: 1,
+    marginLeft: 120,
+    backgroundColor: "rgba(0,0,0,0.2)",
+  },
+  touchableListItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    flex: 1,
+  },
+  pokemonNumber: {
+    flex: 0,
+    width: 45,
+    textAlign: "right",
+    marginRight: 10,
+  },
+  badgeContainer: {
+    flexDirection: "column",
+    flex: 0,
+    marginRight: 10,
+    gap: 5,
+  },
+  chevronRight: {
+    marginLeft: 5,
+    color: "rgba(0,0,0,0.5)",
+  },
+});
