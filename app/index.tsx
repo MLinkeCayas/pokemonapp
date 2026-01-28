@@ -7,7 +7,7 @@ import { Link } from "expo-router";
 import { ScrollView } from "react-native";
 
 export default function PokemonListScreen() {
-  const { data, isLoading, error } = usePokemons(50, 0);
+  const { data, isLoading, error } = usePokemons(100, 0);
 
   if (isLoading) return <ThemedText type="title">Loading...</ThemedText>;
   if (error)
@@ -27,18 +27,43 @@ export default function PokemonListScreen() {
               flex: 1,
             }}
           >
-            <ThemedView style={{ flexDirection: "row", alignItems: "center" }}>
+            <ThemedView
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <PokemonImage
                 imagePath={pokemon.sprites.front_default}
                 imageHeight={100}
                 imageWidth={100}
-                style={{ flex: 0, minWidth: 110, marginRight: 10 }}
+                style={{ flex: 0, minWidth: 110 }}
               />
-              <ThemedText type="title" style={{ flex: 1 }}>
+              <ThemedText
+                type="default"
+                style={{
+                  flex: 0,
+                  width: 45,
+                  textAlign: "right",
+                  marginRight: 10,
+                }}
+              >
+                #{pokemon.order}
+              </ThemedText>
+              <ThemedText
+                type="defaultSemiBold"
+                style={{ flex: 1, flexWrap: "wrap" }}
+              >
                 {pokemon.name}
               </ThemedText>
               <ThemedView
-                style={{ flexDirection: "column", flex: 0, marginRight: 10 }}
+                style={{
+                  flexDirection: "column",
+                  flex: 0,
+                  marginRight: 10,
+                  gap: 5,
+                }}
               >
                 {pokemon.types.map((type) => (
                   <ThemedTypeBadge

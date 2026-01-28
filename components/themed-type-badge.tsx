@@ -1,5 +1,4 @@
 import { StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemedText } from "./themed-text";
 import { ThemedView } from "./themed-view";
 
@@ -58,15 +57,13 @@ export function ThemedTypeBadge({
   const typeColor = getTypeColor(pokemonType);
 
   return (
-    <SafeAreaView style={styles.page}>
-      <ThemedView
-        style={styles.badge}
-        lightColor={typeColor}
-        darkColor={typeColor}
-      >
-        <ThemedText style={styles.badgeText}>{pokemonType}</ThemedText>
-      </ThemedView>
-    </SafeAreaView>
+    <ThemedView
+      style={styles.badge}
+      lightColor={typeColor}
+      darkColor={typeColor}
+    >
+      <ThemedText style={styles.badgeText}>{pokemonType}</ThemedText>
+    </ThemedView>
   );
 }
 
