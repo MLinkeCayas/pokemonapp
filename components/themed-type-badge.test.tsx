@@ -7,7 +7,7 @@ describe("ThemedTypeBadge", () => {
       <ThemedTypeBadge pokemonType="fire" />,
     );
 
-    const text = getByText("fire");
+    const text = getByText("FIRE");
     expect(text).toBeTruthy();
 
     // The badge background is applied by `ThemedView`.
