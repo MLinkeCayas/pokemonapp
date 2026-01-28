@@ -1,6 +1,5 @@
 import {
   getPokemonById,
-  getPokemons,
   getPokemonsInfinite,
   Pokemon,
 } from "@/services/pokeapi";
@@ -9,13 +8,6 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-
-export function usePokemons(pageSize: number, page: number) {
-  return useQuery({
-    queryKey: ["pokemons", pageSize, page],
-    queryFn: () => getPokemons(pageSize, page),
-  });
-}
 
 export function usePokemon(pokemonId: number) {
   const queryClient = useQueryClient();
