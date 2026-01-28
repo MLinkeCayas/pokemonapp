@@ -14,7 +14,7 @@ export default function PokemonDetailScreen() {
   useEffect(() => {
     // Set the title dynamically based on the Pokemon ID
     navigation.setOptions({
-      title: `Pokemon #${data?.name}`,
+      title: `Pokemon ${data?.name as string}`,
     });
   }, [id, navigation]);
 
