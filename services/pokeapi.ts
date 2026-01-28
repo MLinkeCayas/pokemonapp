@@ -46,7 +46,11 @@ interface GetPokemonsResult {
   results: PokemonRef[];
 }
 
-async function getPokemon(url: string): Promise<Pokemon> {
+export async function getPokemonById(pokemonId: number) {
+  return getPokemon(`https://pokeapi.co/api/v2/pokemon/${pokemonId}`);
+}
+
+export async function getPokemon(url: string): Promise<Pokemon> {
   const response = await fetch(url);
 
   if (!response.ok) throw new Error("Not ok");
