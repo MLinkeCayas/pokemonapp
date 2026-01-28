@@ -9,14 +9,16 @@ import { useEffect } from "react";
 export default function PokemonDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
-  const { data, isLoading, error } = usePokemon(+id);
+  const { data, isLoading, error } = usePokemon(parseInt(id, 10));
 
   useEffect(() => {
     // Set the title dynamically based on the Pokemon ID
-    navigation.setOptions({
-      title: `Pokemon ${data?.name as string}`,
-    });
-  }, [id, navigation]);
+    if (data?.name) {
+      navigation.setOptions({
+        title: `Pokemon ${data?.name as string}`,
+      });
+    }
+  }, [data?.name, navigation]);
 
   if (isLoading) return <ThemedText type="title">Loading...</ThemedText>;
 
