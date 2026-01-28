@@ -2,9 +2,10 @@ import { PokemonImage } from "@/components/pokemon-image";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedTypeBadge } from "@/components/themed-type-badge";
 import { ThemedView } from "@/components/themed-view";
-import { usePokemons } from "@/hooks/use-pokemons";
+import { usePokemonsInfinite } from "@/hooks/use-pokemons";
 import { Pokemon } from "@/services/pokeapi";
 import { useRouter } from "expo-router";
+import { useMemo } from "react";
 import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 
 function capitalize(str: string) {
@@ -65,7 +66,12 @@ export function renderSeparator() {
 }
 
 export default function PokemonListScreen() {
-  const { data, isLoading, error } = usePokemons(100, 0);
+  const { data, isLoading, error, fetchNextPage, hasNextPage } =
+    usePokemonsInfinite(20, 60);
+  const pokemons = useMemo(
+    () => data?.pages.flatMap((page) => page.items) ?? [],
+    [data],
+  );
 
   if (isLoading) return <ThemedText type="title">Loading...</ThemedText>;
   if (error)
@@ -74,11 +80,15 @@ export default function PokemonListScreen() {
   return (
     <ThemedView style={{ flex: 1 }}>
       <FlatList
-        data={data}
+        data={pokemons}
         ItemSeparatorComponent={renderSeparator}
         renderItem={(item) => <PokemonListItem pokemon={item.item} />}
         style={{ flex: 1 }}
         keyExtractor={(item) => item.id.toString()}
+        onEndReached={() => {
+          if (hasNextPage) fetchNextPage();
+        }}
+        onEndReachedThreshold={0.5}
       />
     </ThemedView>
   );
