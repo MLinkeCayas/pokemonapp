@@ -4,9 +4,10 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "reset-project": "node ./scripts/reset-project.js",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "android:release": "npx expo run:android --variant release",
+    "ios": "expo run:ios",
+    "ios:release": "npx expo run:ios --configuration Release",
     "web": "expo start --web",
     "lint": "expo lint",
     "test": "jest",
