@@ -5,6 +5,7 @@ import { ThemedView } from "@/components/themed-view";
 import { usePokemon } from "@/hooks/use-pokemons";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect } from "react";
+import { ScrollView, StyleSheet, View } from "react-native";
 
 export default function PokemonDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -26,51 +27,116 @@ export default function PokemonDetailScreen() {
     return <ThemedText type="title">Error: {error.message}</ThemedText>;
 
   return (
-    <ThemedView
-      style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-    >
-      <PokemonImage
-        imagePath={data?.sprites.front_default as string}
-        imageHeight={200}
-        imageWidth={200}
-        style={{ flex: 0, minWidth: 110 }}
-      />
-
-      <ThemedText type="title">
-        # {data?.id} {data?.name}
-      </ThemedText>
-
-      <ThemedView
-        style={{
-          flexDirection: "row",
-          flex: 0,
-          gap: 5,
-        }}
+    <ThemedView style={styles.container}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={true}
       >
-        {data?.types.map((type) => (
-          <ThemedTypeBadge
-            key={type.type.name}
-            pokemonType={type.type.name as any}
+        <ThemedView style={styles.centeredSection}>
+          <PokemonImage
+            imagePath={data?.sprites.front_default as string}
+            imageHeight={200}
+            imageWidth={200}
+            style={styles.pokemonImage}
           />
-        ))}
-      </ThemedView>
 
-      <ThemedText type="title">Stats</ThemedText>
-
-      <ThemedView
-        style={{
-          flexDirection: "column",
-          flex: 0,
-          marginRight: 10,
-          gap: 5,
-        }}
-      >
-        {data?.stats.map((stat) => (
-          <ThemedText key={stat.stat.name}>
-            {stat.stat.name} {stat.base_stat}
+          <ThemedText type="title" style={styles.pokemonName}>
+            # {data?.id} {data?.name?.toUpperCase()}
           </ThemedText>
-        ))}
-      </ThemedView>
+
+          <ThemedView style={styles.typeBadgesContainer}>
+            {data?.types.map((type) => (
+              <ThemedTypeBadge
+                key={type.type.name}
+                pokemonType={type.type.name as any}
+              />
+            ))}
+          </ThemedView>
+        </ThemedView>
+
+        <ThemedView style={styles.statsSection}>
+          <ThemedText type="title" style={styles.statsHeader}>
+            Stats
+          </ThemedText>
+
+          <ThemedView style={styles.statsList}>
+            {data?.stats.map((stat, index) => (
+              <View key={stat.stat.name}>
+                <View style={styles.statRow}>
+                  <ThemedText style={styles.statName}>
+                    {stat.stat.name.toUpperCase()}
+                  </ThemedText>
+                  <ThemedText style={styles.statValue}>
+                    {stat.base_stat}
+                  </ThemedText>
+                </View>
+                {index < (data?.stats.length ?? 0) - 1 && (
+                  <View style={styles.statDivider} />
+                )}
+              </View>
+            ))}
+          </ThemedView>
+        </ThemedView>
+      </ScrollView>
     </ThemedView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingTop: 20,
+    paddingBottom: 40,
+  },
+  centeredSection: {
+    alignItems: "center",
+    paddingVertical: 20,
+  },
+  pokemonImage: {
+    flex: 0,
+    minWidth: 110,
+    marginBottom: 20,
+  },
+  pokemonName: {
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  typeBadgesContainer: {
+    flexDirection: "row",
+    flex: 0,
+    gap: 5,
+    marginBottom: 30,
+  },
+  statsSection: {
+    paddingHorizontal: 20,
+  },
+  statsHeader: {
+    marginBottom: 15,
+  },
+  statsList: {
+    flexDirection: "column",
+  },
+  statRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  statName: {
+    fontSize: 16,
+  },
+  statValue: {
+    fontSize: 16,
+  },
+  statDivider: {
+    height: 1,
+    backgroundColor: "#E0E0E0",
+    marginVertical: 5,
+  },
+});
