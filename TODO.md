@@ -18,3 +18,16 @@ Ideen:
 - [ ] more Persistieren / Cachen
 - [ ] Favorite Makieren
 - [ ] Widget
+
+
+Infinit Query:
+```typescript
+useInfiniteQuery({
+  queryKey: ["items"],
+  initialPageParam: 1,
+  queryFn: ({ pageParam }) => fetchItemsPage({ page: pageParam, limit: 20 }),
+  getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.page + 1 : undefined),
+});
+```
+
+Ui idee: UI mit FlashList (oder FlatList)
