@@ -48,6 +48,6 @@ describe("navigation flow", () => {
     );
 
     fireEvent.press(screen.getByText("Bulbasaur"));
-    expect(await screen.findByText("# 1 bulbasaur")).toBeTruthy();
+    expect(await screen.findByText("# 1 BULBASAUR")).toBeTruthy();
   });
 });
