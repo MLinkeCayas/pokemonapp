@@ -27,6 +27,7 @@ export interface Sprites {
   front_female: string;
   front_shiny: string;
   front_shiny_female: string;
+  front_animated: string;
 }
 
 export interface Pokemon {
@@ -71,6 +72,7 @@ export async function getPokemon(url: string): Promise<Pokemon> {
       front_female: result.sprites.front_female,
       front_shiny: result.sprites.front_shiny,
       front_shiny_female: result.sprites.front_shiny_female,
+      front_animated: result.sprites.other.showdown.front_default
     },
     types: result.types.map((type: any) => ({
       slot: type.slot,

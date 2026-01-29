@@ -56,7 +56,7 @@ export default function PokemonDetailScreen() {
             ]}
           >
             <PokemonImage
-              imagePath={data?.sprites.front_default as string}
+              imagePath={data?.sprites.front_animated as string}
               imageHeight={200}
               imageWidth={200}
               style={styles.pokemonImage}

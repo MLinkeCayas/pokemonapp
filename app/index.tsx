@@ -33,7 +33,7 @@ function PokemonListItem({ pokemon }: { pokemon: Pokemon }) {
         }}
       >
         <PokemonImage
-          imagePath={pokemon.sprites.front_default}
+          imagePath={pokemon.sprites.front_animated}
           imageHeight={100}
           imageWidth={100}
           style={{ flex: 0, minWidth: 110 }}
