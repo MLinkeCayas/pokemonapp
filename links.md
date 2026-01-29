@@ -3,6 +3,7 @@
 https://reactnative.dev/docs/components-and-apis#basic-components
 https://docs.expo.dev/
 https://react.dev/
+https://www.typescriptlang.org
 
 # react lib, for state management, caching, etc.
 
