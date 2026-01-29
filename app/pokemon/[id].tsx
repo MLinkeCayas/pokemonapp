@@ -5,7 +5,7 @@ import { ThemedView } from "@/components/themed-view";
 import { usePokemon } from "@/hooks/use-pokemons";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useRef } from "react";
-import { Animated, ScrollView, StyleSheet, View } from "react-native";
+import { Animated, Easing, ScrollView, StyleSheet, View } from "react-native";
 
 export default function PokemonDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -13,13 +13,120 @@ export default function PokemonDetailScreen() {
   const { data, isLoading, error } = usePokemon(parseInt(id, 10));
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const spinAnim = useRef(new Animated.Value(0)).current;
+  const moveAnim = useRef(new Animated.Value(0)).current;
+  const vibrateAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const spin = spinAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
+
+  const moveX = moveAnim.interpolate({
+    inputRange: [0, 0.25, 0.75, 1],
+    outputRange: [0, 100, -100, 0],
+  });
+
+  const vibrateX = vibrateAnim.interpolate({
+    inputRange: [0, 0.25, 0.5, 0.75, 1],
+    outputRange: [0, -5, 5, -5, 0], // small quick shake left and right
+  });
+
+  const scale = scaleAnim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [1, 1.2, 1],
+  });
 
   const fadeIn = () => {
+    // Main animations
+    Animated.sequence([
+      // Fade in
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+      }),
+      // Spin
+      Animated.timing(spinAnim, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+      }),
+      // Move left-right and back to start
+      Animated.timing(moveAnim, {
+        toValue: 1,
+        duration: 2000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(vibrateAnim, {
+        toValue: 1,
+        duration: 100, // very fast shake
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1.2,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(scaleAnim, {
+        toValue: 1,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      // Stop vibration after main animation ends
+      vibrateAnim.stopAnimation();
+      vibrateAnim.setValue(0); // reset to 0
+    });
+  };
+
+  const animateAll = () => {
+    // Fade in
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 5000,
+      duration: 2000,
       useNativeDriver: true,
     }).start();
+
+    // Continuous loop for spinning, moving, vibrating, scaling
+    Animated.loop(
+      Animated.parallel([
+        Animated.timing(spinAnim, {
+          toValue: 1,
+          duration: 4000,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.timing(moveAnim, {
+          toValue: 1,
+          duration: 4000,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }),
+        Animated.loop(
+          Animated.timing(vibrateAnim, {
+            toValue: 1,
+            duration: 100,
+            useNativeDriver: true,
+          }),
+        ),
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(scaleAnim, {
+              toValue: 1.2,
+              duration: 500,
+              useNativeDriver: true,
+            }),
+            Animated.timing(scaleAnim, {
+              toValue: 1,
+              duration: 500,
+              useNativeDriver: true,
+            }),
+          ]),
+        ),
+      ]),
+    ).start();
   };
 
   useEffect(() => {
@@ -29,7 +136,8 @@ export default function PokemonDetailScreen() {
         title: `Pokemon ${data?.name.toUpperCase() as string}`,
       });
 
-      fadeIn();
+      animateAll();
+      //fadeIn();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.name, navigation]);
@@ -52,6 +160,12 @@ export default function PokemonDetailScreen() {
               styles.container,
               {
                 opacity: fadeAnim,
+                transform: [
+                  { rotate: spin },
+                  { translateX: moveX },
+                  { translateX: vibrateX },
+                  { scale },
+                ],
               },
             ]}
           >
