@@ -29,6 +29,9 @@ export default function PokemonDetailScreen() {
   const textScale = useRef(new Animated.Value(0.5)).current;
   const contentFadeAnim = useRef(new Animated.Value(0)).current;
 
+  const statsSlideAnim = useRef(new Animated.Value(80)).current;
+  const statsOpacityAnim = useRef(new Animated.Value(0)).current;
+
   const runBattleIntro = () => {
     Animated.sequence([
       Animated.loop(
@@ -94,6 +97,27 @@ export default function PokemonDetailScreen() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.name, navigation]);
+
+  useEffect(() => {
+    if (battleIntroComplete) {
+      Animated.sequence([
+        Animated.delay(500), // ⏱️ kleine Verzögerung (ms)
+        Animated.parallel([
+          Animated.spring(statsSlideAnim, {
+            toValue: 0,
+            tension: 60,
+            friction: 8,
+            useNativeDriver: true,
+          }),
+          Animated.timing(statsOpacityAnim, {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true,
+          }),
+        ]),
+      ]).start();
+    }
+  }, [battleIntroComplete, statsOpacityAnim, statsSlideAnim]);
 
   if (isLoading) return <ThemedText type="title">Loading...</ThemedText>;
 
@@ -187,7 +211,15 @@ export default function PokemonDetailScreen() {
             </ThemedView>
           </ThemedView>
 
-          <ThemedView style={styles.statsSection}>
+          <Animated.View
+            style={[
+              styles.statsSection,
+              {
+                opacity: statsOpacityAnim,
+                transform: [{ translateY: statsSlideAnim }],
+              },
+            ]}
+          >
             <ThemedText type="title" style={styles.statsHeader}>
               Stats
             </ThemedText>
@@ -209,7 +241,7 @@ export default function PokemonDetailScreen() {
                 </View>
               ))}
             </ThemedView>
-          </ThemedView>
+          </Animated.View>
         </ScrollView>
       </Animated.View>
     </ThemedView>
