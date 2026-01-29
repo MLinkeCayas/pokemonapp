@@ -37,6 +37,7 @@ export interface Pokemon {
   sprites: Sprites;
   types: TypeSlot[];
   stats: StatValue[];
+  height: number;
 }
 
 interface PokemonRef {
@@ -63,6 +64,7 @@ export async function getPokemon(url: string): Promise<Pokemon> {
     id: result.id,
     name: result.name,
     order: result.order,
+    height: result.height,
     sprites: {
       back_default: result.sprites.back_default,
       back_female: result.sprites.back_female,
