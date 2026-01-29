@@ -29,6 +29,9 @@ export default function PokemonDetailScreen() {
   const textScale = useRef(new Animated.Value(0.5)).current;
   const contentFadeAnim = useRef(new Animated.Value(0)).current;
 
+  const statsSlideAnim = useRef(new Animated.Value(80)).current;
+  const statsOpacityAnim = useRef(new Animated.Value(0)).current;
+
   const runBattleIntro = () => {
     Animated.sequence([
       Animated.loop(
@@ -84,16 +87,36 @@ export default function PokemonDetailScreen() {
   };
 
   useEffect(() => {
-    // Set the title dynamically based on the Pokemon ID
     if (data?.name) {
       navigation.setOptions({
-        title: `Pokemon ${data?.name.toUpperCase() as string}`,
+        title: `Pokemon ${data.name.toUpperCase()}`,
       });
 
       runBattleIntro();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.name, navigation]);
+
+  useEffect(() => {
+    if (battleIntroComplete) {
+      Animated.sequence([
+        Animated.delay(500),
+        Animated.parallel([
+          Animated.spring(statsSlideAnim, {
+            toValue: 0,
+            tension: 60,
+            friction: 8,
+            useNativeDriver: true,
+          }),
+          Animated.timing(statsOpacityAnim, {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true,
+          }),
+        ]),
+      ]).start();
+    }
+  }, [battleIntroComplete, statsOpacityAnim, statsSlideAnim]);
 
   if (isLoading) return <ThemedText type="title">Loading...</ThemedText>;
 
@@ -157,7 +180,7 @@ export default function PokemonDetailScreen() {
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator
         >
           <ThemedView style={styles.centeredSection}>
             <View style={styles.pokemonDisplayContainer}>
@@ -187,7 +210,15 @@ export default function PokemonDetailScreen() {
             </ThemedView>
           </ThemedView>
 
-          <ThemedView style={styles.statsSection}>
+          <Animated.View
+            style={[
+              styles.statsSection,
+              {
+                opacity: statsOpacityAnim,
+                transform: [{ translateY: statsSlideAnim }],
+              },
+            ]}
+          >
             <ThemedText type="title" style={styles.statsHeader}>
               Stats
             </ThemedText>
@@ -209,7 +240,7 @@ export default function PokemonDetailScreen() {
                 </View>
               ))}
             </ThemedView>
-          </ThemedView>
+          </Animated.View>
         </ScrollView>
       </Animated.View>
     </ThemedView>
