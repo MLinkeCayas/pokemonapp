@@ -20,3 +20,10 @@ https://testing-library.com/docs/react-native-testing-library/intro/
 # on device testing
 
 https://maestro.dev/
+
+# native binding
+
+https://docs.expo.dev/modules/module-api/
+
+samples:
+https://github.com/expo/expo/blob/main/packages
