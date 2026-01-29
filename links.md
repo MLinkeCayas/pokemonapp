@@ -27,3 +27,16 @@ https://docs.expo.dev/modules/module-api/
 
 samples:
 https://github.com/expo/expo/blob/main/packages
+
+# von Christoph für gut befunden
+
+- https://zod.dev/ -> runtime validation
+- https://react-hook-form.com/ -> form handling
+
+bei sehr komplexen State in der App
+
+- https://zustand.docs.pmnd.rs/getting-started/introduction
+
+evtl. auch Redux.
+https://redux.js.org
+sehr event gesteuertes System, gut testbarm gute tools, aber auch etwas komplexer und boiler plate code.
