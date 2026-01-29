@@ -1,26 +1,112 @@
-import { PokemonImage } from "@/components/pokemon-image";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedTypeBadge } from "@/components/themed-type-badge";
 import { ThemedView } from "@/components/themed-view";
 import { usePokemon } from "@/hooks/use-pokemons";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useRef } from "react";
-import { Animated, ScrollView, StyleSheet, View } from "react-native";
+import {
+  Animated,
+  Easing,
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 
 export default function PokemonDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const navigation = useNavigation();
   const { data, isLoading, error } = usePokemon(parseInt(id, 10));
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const pokeballScale = useRef(new Animated.Value(1)).current;
+  const pokemonY = useRef(new Animated.Value(0)).current; // start behind
+  const pokemonScale = useRef(new Animated.Value(0)).current; // completely hidden
+  const pokemonSpin = useRef(new Animated.Value(0)).current;
 
-  const fadeIn = () => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 5000,
-      useNativeDriver: true,
-    }).start();
+  const animateReveal = () => {
+    // Pokeball shake
+    const shake = Animated.sequence([
+      Animated.timing(pokeballScale, {
+        toValue: 1.1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(pokeballScale, {
+        toValue: 0.9,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(pokeballScale, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(pokeballScale, {
+        toValue: 1.1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(pokeballScale, {
+        toValue: 0.9,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(pokeballScale, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(pokeballScale, {
+        toValue: 1.1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(pokeballScale, {
+        toValue: 0.9,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(pokeballScale, {
+        toValue: 1,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(pokeballScale, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    const popOut = Animated.parallel([
+      Animated.timing(pokemonY, {
+        toValue: 0, // move to original position
+        duration: 500,
+        easing: Easing.out(Easing.elastic(1)),
+        useNativeDriver: true,
+      }),
+      Animated.timing(pokemonScale, {
+        toValue: 1, // full size
+        duration: 500,
+        easing: Easing.out(Easing.elastic(1)),
+        useNativeDriver: true,
+      }),
+      Animated.timing(pokemonSpin, {
+        toValue: 1,
+        duration: 500,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      }),
+    ]);
+
+    Animated.sequence([shake, popOut]).start();
   };
+
+  const spin = pokemonSpin.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
 
   useEffect(() => {
     // Set the title dynamically based on the Pokemon ID
@@ -28,10 +114,7 @@ export default function PokemonDetailScreen() {
       navigation.setOptions({
         title: `Pokemon ${data?.name.toUpperCase() as string}`,
       });
-
-      fadeIn();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.name, navigation]);
 
   if (isLoading) return <ThemedText type="title">Loading...</ThemedText>;
@@ -47,21 +130,26 @@ export default function PokemonDetailScreen() {
         showsVerticalScrollIndicator={true}
       >
         <ThemedView style={styles.centeredSection}>
-          <Animated.View
-            style={[
-              styles.container,
-              {
-                opacity: fadeAnim,
-              },
-            ]}
-          >
-            <PokemonImage
-              imagePath={data?.sprites.front_default as string}
-              imageHeight={200}
-              imageWidth={200}
-              style={styles.pokemonImage}
-            />
-          </Animated.View>
+          <TouchableWithoutFeedback onPress={animateReveal}>
+            <Animated.View style={{ transform: [{ scale: pokeballScale }] }}>
+              <Image
+                source={require("../../assets/images/pokeball.png")}
+                style={styles.pokeball}
+              />
+            </Animated.View>
+          </TouchableWithoutFeedback>
+
+          <Animated.Image
+            source={{ uri: data?.sprites.front_default as string }}
+            style={{
+              ...styles.pokemon,
+              transform: [
+                { translateY: pokemonY },
+                { scale: pokemonScale },
+                { rotate: spin },
+              ],
+            }}
+          />
 
           <ThemedText type="title" style={styles.pokemonName}>
             # {data?.id} {data?.name?.toUpperCase()}
@@ -109,6 +197,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+
   scrollView: {
     flex: 1,
   },
@@ -160,5 +249,14 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: "#E0E0E0",
     marginVertical: 5,
+  },
+  pokeball: {
+    width: 200,
+    height: 200,
+  },
+  pokemon: {
+    width: 200,
+    height: 200,
+    position: "absolute",
   },
 });
