@@ -15,6 +15,7 @@
 - Platform.OS Checks (conditional Components)
 - react hooks Übersicht
 - useReactQuery best practices
+- State Management (Context API, Redux Optionen)
 
 - Burger / Flyout Menu
 - Authorized Routes / Redirect To Login....
@@ -22,4 +23,3 @@
 - include Web Components
 
 - Component Structure
-- State Management (Context API, Redux Optionen)
