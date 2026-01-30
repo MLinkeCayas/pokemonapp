@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start:clean": "expo start -c",
     "android": "expo run:android",
     "android:release": "npx expo run:android --variant release",
     "ios": "expo run:ios",
@@ -11,7 +12,10 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "fix-expo-dependencies": "expo install --fix",
+    "open-xcode": "open ios/pokemonapp.xcworkspace",
+    "open-android-studio": "open -a \"Android Studio\" android"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
