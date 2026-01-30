@@ -15,14 +15,9 @@ const mockPokemon = {
 
 jest.mock("@/hooks/use-pokemons", () => {
   return {
-    usePokemonsInfinite: () => ({
+    usePokemons: () => ({
       data: {
-        pages: [
-          {
-            items: [mockPokemon],
-            nextCursor: undefined,
-          },
-        ],
+        pages: [{ items: [mockPokemon], nextCursor: undefined }],
       },
       isLoading: false,
       error: null,
