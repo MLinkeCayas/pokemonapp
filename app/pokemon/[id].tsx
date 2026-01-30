@@ -3,12 +3,14 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedTypeBadge } from "@/components/themed-type-badge";
 import { ThemedView } from "@/components/themed-view";
 import { usePokemon } from "@/hooks/use-pokemons";
+
 import { Image } from "expo-image";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
+  Pressable,
   ScrollView,
   StyleSheet,
   View,
@@ -23,17 +25,29 @@ export default function PokemonDetailScreen() {
 
   const [battleIntroComplete, setBattleIntroComplete] = useState(false);
 
+  const fadeAnim = useRef(new Animated.Value(0)).current;
   const flashAnim = useRef(new Animated.Value(0)).current;
   const pokemonSlideAnim = useRef(new Animated.Value(SCREEN_WIDTH)).current;
   const textOpacity = useRef(new Animated.Value(0)).current;
   const textScale = useRef(new Animated.Value(0.5)).current;
   const contentFadeAnim = useRef(new Animated.Value(0)).current;
-
   const statsSlideAnim = useRef(new Animated.Value(80)).current;
   const statsOpacityAnim = useRef(new Animated.Value(0)).current;
 
+  const animationRef = useRef<Animated.CompositeAnimation | null>(null);
+
+  const skipBattleIntro = () => {
+    if (animationRef.current) animationRef.current.stop();
+    flashAnim.setValue(0);
+    pokemonSlideAnim.setValue(0);
+    textOpacity.setValue(0);
+    textScale.setValue(1);
+    contentFadeAnim.setValue(1);
+    setBattleIntroComplete(true);
+  };
+
   const runBattleIntro = () => {
-    Animated.sequence([
+    const animation = Animated.sequence([
       Animated.loop(
         Animated.sequence([
           Animated.timing(flashAnim, {
@@ -81,27 +95,22 @@ export default function PokemonDetailScreen() {
           useNativeDriver: true,
         }),
       ]),
-    ]).start(() => {
-      setBattleIntroComplete(true);
-    });
+    ]);
+    animationRef.current = animation;
+    animation.start(() => setBattleIntroComplete(true));
   };
 
   useEffect(() => {
-    // Set the title dynamically based on the Pokemon ID
     if (data?.name) {
-      navigation.setOptions({
-        title: `Pokemon ${data?.name.toUpperCase() as string}`,
-      });
-
+      navigation.setOptions({ title: `Pokemon ${data.name.toUpperCase()}` });
       runBattleIntro();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data?.name, navigation]);
 
   useEffect(() => {
     if (battleIntroComplete) {
       Animated.sequence([
-        Animated.delay(500), // ⏱️ kleine Verzögerung (ms)
+        Animated.delay(500),
         Animated.parallel([
           Animated.spring(statsSlideAnim, {
             toValue: 0,
@@ -117,33 +126,27 @@ export default function PokemonDetailScreen() {
         ]),
       ]).start();
     }
-  }, [battleIntroComplete, statsOpacityAnim, statsSlideAnim]);
+  }, [battleIntroComplete]);
 
   if (isLoading) return <ThemedText type="title">Loading...</ThemedText>;
-
   if (error)
     return <ThemedText type="title">Error: {error.message}</ThemedText>;
 
   return (
     <ThemedView style={styles.container}>
       {!battleIntroComplete && (
-        <View style={styles.battleIntroContainer}>
+        <Pressable
+          style={styles.battleIntroContainer}
+          onPress={skipBattleIntro}
+        >
           <Animated.View
-            style={[
-              styles.flashOverlay,
-              {
-                opacity: flashAnim,
-              },
-            ]}
+            style={[styles.flashOverlay, { opacity: flashAnim }]}
           />
-
           <View style={styles.battleScene}>
             <Animated.View
               style={[
                 styles.battlePokemonContainer,
-                {
-                  transform: [{ translateX: pokemonSlideAnim }],
-                },
+                { transform: [{ translateX: pokemonSlideAnim }] },
               ]}
             >
               <PokemonImage
@@ -161,10 +164,7 @@ export default function PokemonDetailScreen() {
             <Animated.View
               style={[
                 styles.battleTextContainer,
-                {
-                  opacity: textOpacity,
-                  transform: [{ scale: textScale }],
-                },
+                { opacity: textOpacity, transform: [{ scale: textScale }] },
               ]}
             >
               <View style={styles.battleTextBox}>
@@ -174,14 +174,14 @@ export default function PokemonDetailScreen() {
               </View>
             </Animated.View>
           </View>
-        </View>
+        </Pressable>
       )}
 
       <Animated.View style={[styles.mainContent, { opacity: contentFadeAnim }]}>
         <ScrollView
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={true}
+          showsVerticalScrollIndicator
         >
           <ThemedView style={styles.centeredSection}>
             <View style={styles.pokemonDisplayContainer}>
@@ -211,19 +211,10 @@ export default function PokemonDetailScreen() {
             </ThemedView>
           </ThemedView>
 
-          <Animated.View
-            style={[
-              styles.statsSection,
-              {
-                opacity: statsOpacityAnim,
-                transform: [{ translateY: statsSlideAnim }],
-              },
-            ]}
-          >
+          <ThemedView style={styles.statsSection}>
             <ThemedText type="title" style={styles.statsHeader}>
               Stats
             </ThemedText>
-
             <ThemedView style={styles.statsList}>
               {data?.stats.map((stat, index) => (
                 <View key={stat.stat.name}>
@@ -241,7 +232,7 @@ export default function PokemonDetailScreen() {
                 </View>
               ))}
             </ThemedView>
-          </Animated.View>
+          </ThemedView>
         </ScrollView>
       </Animated.View>
     </ThemedView>
@@ -249,61 +240,30 @@ export default function PokemonDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingTop: 20,
-    paddingBottom: 40,
-  },
-  centeredSection: {
-    alignItems: "center",
-    paddingVertical: 20,
-  },
-  pokemonImage: {
-    flex: 0,
-    minWidth: 110,
-    marginBottom: 20,
-  },
-  pokemonName: {
-    marginBottom: 15,
-    textAlign: "center",
-  },
+  container: { flex: 1 },
+  scrollView: { flex: 1 },
+  scrollContent: { paddingTop: 20, paddingBottom: 40 },
+  centeredSection: { alignItems: "center", paddingVertical: 20 },
+  pokemonImage: { flex: 0, minWidth: 110, marginBottom: 20 },
+  pokemonName: { marginBottom: 15, textAlign: "center" },
   typeBadgesContainer: {
     flexDirection: "row",
     flex: 0,
     gap: 5,
     marginBottom: 30,
   },
-  statsSection: {
-    paddingHorizontal: 20,
-  },
-  statsHeader: {
-    marginBottom: 15,
-  },
-  statsList: {
-    flexDirection: "column",
-  },
+  statsSection: { paddingHorizontal: 20 },
+  statsHeader: { marginBottom: 15 },
+  statsList: { flexDirection: "column" },
   statRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 10,
   },
-  statName: {
-    fontSize: 16,
-  },
-  statValue: {
-    fontSize: 16,
-  },
-  statDivider: {
-    height: 1,
-    backgroundColor: "#E0E0E0",
-    marginVertical: 5,
-  },
+  statName: { fontSize: 16 },
+  statValue: { fontSize: 16 },
+  statDivider: { height: 1, backgroundColor: "#E0E0E0", marginVertical: 5 },
   battleIntroContainer: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "#000",
@@ -328,16 +288,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     overflow: "visible",
   },
-  battlePokemonImage: {
-    flex: 0,
-    width: 200,
-    height: 200,
-  },
-  battleGrass: {
-    width: 200,
-    height: 100,
-    marginTop: -110,
-  },
+  battlePokemonImage: { flex: 0, width: 200, height: 200 },
+  battleGrass: { width: 200, height: 100, marginTop: -110 },
   battleTextContainer: {
     position: "absolute",
     bottom: 80,
@@ -358,10 +310,6 @@ const styles = StyleSheet.create({
     color: "#333",
     textAlign: "left",
   },
-  mainContent: {
-    flex: 1,
-  },
-  pokemonDisplayContainer: {
-    alignItems: "center",
-  },
+  mainContent: { flex: 1 },
+  pokemonDisplayContainer: { alignItems: "center" },
 });
