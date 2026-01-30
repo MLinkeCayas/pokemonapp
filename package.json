@@ -14,6 +14,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "fix-expo-dependencies": "expo install --fix",
+    "expo-doctor": "npx expo-doctor",
     "open-xcode": "open ios/pokemonapp.xcworkspace",
     "open-android-studio": "open -a \"Android Studio\" android"
   },
