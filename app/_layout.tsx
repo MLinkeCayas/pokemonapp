@@ -12,7 +12,7 @@ import "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export const unstable_settings = {
-  anchor: "(tabs)",
+  anchor: "/",
 };
 
 const queryClient = new QueryClient();
