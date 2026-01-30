@@ -41,3 +41,7 @@ bei sehr komplexen State in der App
 evtl. auch Redux.
 https://redux.js.org
 sehr event gesteuertes System, gut testbarm gute tools, aber auch etwas komplexer und boiler plate code.
+
+
+# ToDo App Sample
+https://github.com/stockulus/to-do-app
